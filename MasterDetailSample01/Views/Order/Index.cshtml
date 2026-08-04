@@ -1,0 +1,411 @@
+﻿@{
+    ViewBag.Title = "Order";
+}
+
+
+
+
+<div class="card mt-3">
+
+    <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Orders List</h5>
+            <button class="btn btn-success btn-sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#createOrderModal">
+                Create New Order +
+            </button>
+        </div>
+    </div>
+
+
+    <div class="card-body">
+        <table class="table table-hover table-bordered align-middle shadow-sm table-fixed">
+            <thead class="table-dark text-center">
+                <tr>
+                    <th class="text-center" style="width: 20%;">Customer</th>
+                    <th class="text-center" style="width: 20%;">Seller</th>
+                    <th class="text-center" style="width: 20%;">Final Price</th>
+                    <th class="text-center" style="width: 20%;">Order Details</th>
+                    <th class="text-center" style="width: 20%;">Actions </th>
+                </tr>
+            </thead>
+            <tbody id="orderTableBody">
+                @* توسط JavaScript پر می‌شود *@
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+
+
+<!-- Create Order Modal -->
+
+<div class="modal fade"
+     id="createOrderModal"
+     tabindex="-1">
+
+    <div class="modal-dialog modal-xl">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    Create Order
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <!-- Customer -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Customer
+                    </label>
+
+                    <div class="input-group">
+
+                        <input type="hidden"
+                               id="customerId" />
+
+                        <input type="text"
+                               id="customerFirstName"
+                               class="form-control"
+                               readonly
+                               placeholder="Select FirstName" />
+                        <input type="text"
+                               id="customerLastName"
+                               class="form-control"
+                               readonly
+                               placeholder="Select LastName" />
+                        <button type="button"
+                                class="btn btn-info"
+                                data-bs-toggle="modal"
+                                data-bs-target="#customerModal"
+                                data-bs-dismiss="modal">
+
+                            Select
+
+                        </button>
+
+
+                    </div>
+
+                </div>
+
+                <!-- Seller -->
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Seller
+                    </label>
+
+                    <div class="input-group">
+
+                        <input type="hidden"
+                               id="sellerId" />
+
+                        <input type="text"
+                               id="sellerFirstName"
+                               class="form-control"
+                               readonly
+                               placeholder="Select Seller" />
+                        <input type="text"
+                               id="sellerLastName"
+                               class="form-control"
+                               readonly
+                               placeholder="Select Seller" />
+
+                        <button type="button"
+                                class="btn btn-info"
+                                data-bs-toggle="modal"
+                                data-bs-target="#sellerModal"
+                                data-bs-dismiss="modal">
+
+                            Select
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <hr />
+
+                <!-- Details -->
+                <div class="mb-3">
+                    <h5 class="mb-3">Order Details</h5>
+
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-fixed"
+                               id="detailsTable"
+                               style="table-layout: fixed; width: 100%;">
+                            <thead class="table-success">
+                                <tr>
+                                    <th class="text-center" style="width: 20%;">Product Name</th>
+                                    <th class="text-center" style="width: 20%;">Unit Price</th>
+                                    <th class="text-center" style="width: 20%;">Quantity</th>
+                                    <th class="text-center" style="width: 20%;">Total Price</th>
+                                    <th class="text-center" style="width: 20%;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="detailsTableBody">
+                                <!-- ردیف‌ها توسط JavaScript اضافه میشوند -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-3">
+                        <h5 class="text-success">
+                            Final Price :
+                            <span id="finalPrice">0</span>
+                        </h5>
+                    </div>
+
+                    <button type="button"
+                            class="btn btn-success mt-2"
+                            id="addDetailBtn">
+                        <i class="bi bi-plus-circle me-1"></i> Add Detail
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                    Cancel
+
+                </button>
+
+                <button type="button"
+                        class="btn btn-info create-btn">
+
+                    Save Order
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Customer Modal -->
+
+
+<div class="modal fade" id="customerModal" tabindex="-1">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    Select Customer
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <table class="table table-hover">
+
+                    <thead>
+
+                        <tr>
+                            <th>Customer FirstName</th>
+                            <th>Customer LastName</th>
+                            <th>Phone Number</th>
+                            <th width="120"></th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="customerTableBody">
+
+                        @*
+                        بعداً با JS پر می‌شود
+                        *@
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Seller Modal -->
+
+
+<div class="modal fade"
+     id="sellerModal"
+     tabindex="-1">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    Select Seller
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <table class="table table-hover">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>First Name</th>
+                            <th>Last Name</th>
+
+                            <th width="120"></th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody id="sellerTableBody">
+
+                        @*
+                        بعداً با JS پر می‌شود
+                        *@
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Edit Order Modal -->
+<div class="modal fade" id="editOrderModal" tabindex="-1">
+
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editOrderModalTitle">Edit Order</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="editOrderId" />
+                <input type="hidden" id="editOrderGuidKey" />
+              
+
+                <!-- Customer -->
+                <div class="mb-3">
+                    <label class="form-label">Customer</label>
+                    <div class="input-group">
+                        <input type="hidden" id="editCustomerId" />
+                        <input type="text" id="editCustomerFirstName" class="form-control" readonly placeholder="First Name" />
+                        <input type="text" id="editCustomerLastName" class="form-control" readonly placeholder="Last Name" />
+                        <button type="button"
+                                class="btn btn-primary"
+                                data-bs-toggle="modal"
+                                data-bs-target="#customerModal"
+                                data-bs-dismiss="modal">
+                            Select
+                        </button>
+
+                    </div>
+                </div>
+
+                <!-- Seller -->
+                <div class="mb-3">
+                    <label class="form-label">Seller</label>
+                    <div class="input-group">
+                        <input type="hidden" id="editSellerId" />
+                        <input type="text" id="editSellerFirstName" class="form-control" readonly placeholder="First Name" />
+                        <input type="text" id="editSellerLastName" class="form-control" readonly placeholder="Last Name" />
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#sellerModal" data-bs-dismiss="modal">
+                            Select
+                        </button>
+                    </div>
+                </div>
+
+                <hr />
+
+                <!-- Details -->
+                <h5>Order Details</h5>
+                <div class="mb-2">
+                    <span class="fw-bold">Final Price: </span>
+                    <span id="editFinalPrice" class="text-success fw-bold fs-5">0</span>
+                </div>
+
+                <table id="editDetailsTable" class="table table-bordered table-fixed">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center" style="width: 20%;">Product Name</th>
+                            <th class="text-center" style="width: 20%;">Unit Price</th>
+                            <th class="text-center" style="width: 20%;">Quantity</th>
+                            <th class="text-center" style="width: 20%;">Total Price</th>
+                            <th class="text-center" style="width: 20%;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="editDetailsTableBody"></tbody>
+
+                </table>
+
+                <button type="button" class="btn btn-success" id="editAddDetailBtn">Add Detail</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="updateOrderBtn">Update Order</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts
+{
+    <script src="~/js/Order.js"></script>
+}
