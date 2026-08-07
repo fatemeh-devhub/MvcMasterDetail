@@ -148,7 +148,26 @@ namespace MasterDetailSample01.ApplicationServices.services
         #region [- DeleteAsync() -]
         public async Task<IResponse<DeleteOrderHeaderDto>> DeleteAsync(DeleteOrderHeaderDto obj)
         {
-            throw new NotImplementedException();
+            if (obj == null)
+                return new Response<DeleteOrderHeaderDto>
+                    (
+                     false,
+                     HttpStatusCode.BadRequest,
+                     ResponseMessages.NullInput,
+                     null
+                    );
+            var orderHeader = new OrderHeader
+            {
+                Id = obj.Id,
+            };
+            var result = _orderHeaderRepository.DeleteAsync(orderHeader);
+            return new Response<DeleteOrderHeaderDto>
+               (
+                true,
+                HttpStatusCode.OK,
+                ResponseMessages.SuccessfullOperation,
+                obj
+                ); 
       
         } 
         #endregion

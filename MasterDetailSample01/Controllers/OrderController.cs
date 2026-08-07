@@ -61,6 +61,24 @@ namespace MasterDetailSample01.Controllers
         }
         #endregion
 
+        #region [- Delete() -]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteOrder([FromBody] DeleteOrderHeaderDto dto)
+        {
+
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _orderHeaderApplicationService.DeleteAsync(dto);
+
+            if (!result.IsSuccessful)
+
+                return BadRequest(result.Message);
+
+            return Ok(result.Value);
+        } 
+        #endregion
+
         #region [- GetAll() -]
         [HttpGet]
         public async Task<IActionResult> GetAll()

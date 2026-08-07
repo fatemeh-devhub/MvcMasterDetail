@@ -220,7 +220,11 @@ const renderOrders = (ordersList) => {
             <td>
                 <button class="btn btn-warning edit-order"
                         data-id="${order.id}">
-                    Edit Order
+                    Edit
+                </button>
+                <button class="btn btn-danger delete-order"
+                        data-id="${order.id}">
+                    Delete
                 </button>
             </td>
         </tr>
@@ -458,7 +462,7 @@ const updateOrder = async () => {
 
     try {
         
-        // STEP 1: Get Order GUID (همه شناسه‌ها Guid هستند)
+        // STEP 1: Get Order GUID 
        const orderId = document.querySelector("#editOrderId").value;     
         const orderGuidKey = document.querySelector("#editOrderGuidKey").value; 
 
@@ -471,7 +475,7 @@ const updateOrder = async () => {
         }
 
         
-        // STEP 2: Get Customer and Seller (هر دو Guid هستند)
+        // STEP 2: Get Customer and Seller 
         const customerId = document.querySelector("#editCustomerId").value;
         const sellerId = document.querySelector("#editSellerId").value;
 
@@ -533,7 +537,7 @@ const updateOrder = async () => {
        const finalPrice = orderDetails.reduce(
             (sum, detail) => sum + (detail.unitPrice * detail.quantity), 0
         );
-        console.log("💰 Final Price:", finalPrice);
+        console.log("Final Price:", finalPrice);
 
        
         // STEP 5: Build DTO 
@@ -546,7 +550,7 @@ const updateOrder = async () => {
             orderDetails: orderDetails
         };
 
-        console.log("📤 Sending data:", JSON.stringify(updateDto, null, 2));
+        console.log("Sending data:", JSON.stringify(updateDto, null, 2));
 
        
         // STEP 6: Send PUT Request
@@ -576,7 +580,7 @@ const updateOrder = async () => {
 
         // STEP 8: Check Response
           if (!response.ok) {
-            // نمایش خطاهای اعتبارسنجی
+           
             if (responseData && typeof responseData === 'object') {
                 const errors = [];
                 for (const key in responseData) {
@@ -611,6 +615,62 @@ const updateOrder = async () => {
         console.error("Error in updateOrder:", error);
         alert(`Error updating order: ${error.message}`);
     }
+};
+
+
+
+// Delete Order Function (Without try-catch)
+
+const deleteOrder = async (orderId) => {
+    // Show confirmation
+    if (!confirm('Are you sure you want to permanently delete this order?\n\nThis action cannot be undone!')) {
+        return;
+    }
+
+    // Show loading on button
+    const deleteBtn = document.querySelector(`.delete-order[data-id="${orderId}"]`);
+    if (deleteBtn) {
+        deleteBtn.disabled = true;
+        deleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Deleting...';
+    }
+
+    // Prepare data
+    const dto = {
+        id: orderId
+    };
+
+    // Send DELETE request
+    const response = await fetch('/Order/DeleteOrder', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dto)
+    });
+  
+
+    const result = await response.json();
+
+    if (!response.ok) {
+        alert(`Error: ${result.message || 'Failed to delete order'}`);
+        if (deleteBtn) {
+            deleteBtn.disabled = false;
+            deleteBtn.innerHTML = 'Delete Order';
+        }
+        return;
+    }
+
+    // Success
+    alert('Order deleted successfully!');
+
+    // Reset button
+    if (deleteBtn) {
+        deleteBtn.disabled = false;
+        deleteBtn.innerHTML = 'Delete Order';
+    }
+
+    // Reload orders
+    await loadOrders();
 };
 
 
@@ -711,9 +771,9 @@ detailsTableBody.addEventListener("click", function (e) {
 // Create order button
 createBtn.addEventListener("click", createOrder);
 
-// ================================================================
+
 // *** Edit Form Events
-// ================================================================
+
 
 // Add new detail row in edit
 editAddDetailBtn.addEventListener("click", () => {
@@ -790,9 +850,25 @@ editDetailsTableBody.addEventListener("click", function (e) {
 // Click event for update order button
 updateOrderBtn.addEventListener("click", updateOrder);
 
-// ================================================================
+
+// Event Listener for Delete Buttons
+
+document.addEventListener('click', function (e) {
+    const deleteBtn = e.target.closest('.delete-order');
+    if (!deleteBtn) return;
+
+    const orderId = deleteBtn.dataset.id;
+    if (!orderId) {
+        alert('Order ID not found!');
+        return;
+    }
+
+    deleteOrder(orderId);
+});
+
+
 // *** General Events (Event Delegation)
-// ================================================================
+
 
 // Click on edit order buttons
 document.addEventListener("click", function (e) {

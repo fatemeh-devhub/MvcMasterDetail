@@ -32,7 +32,6 @@ namespace MasterDetailSample01.Models.Services.Repositories
             {
                 var json = JsonSerializer.Serialize(obj);
                 var param = new SqlParameter("@OrderJson", json);
-
                 var orderId = _context.Database
                 .SqlQueryRaw<Guid>(
                  "EXEC Usp_InsertOrder @OrderJson",
@@ -71,7 +70,7 @@ namespace MasterDetailSample01.Models.Services.Repositories
                 var json = JsonSerializer.Serialize(obj);
 
                 var param = new SqlParameter("@OrderJson", json);
-
+              
                 await _context.Database.ExecuteSqlRawAsync(
                 "EXEC Usp_UpdateOrder @OrderJson", param);
 
@@ -102,20 +101,40 @@ namespace MasterDetailSample01.Models.Services.Repositories
 
         public async Task<IResponse<OrderHeader>> DeleteAsync(OrderHeader obj)
         {
-            var json = JsonSerializer.Serialize(obj);
-            var param = new SqlParameter("@OrderId", json);
+            try
+            {
 
-            await _context.Database.ExecuteSqlRawAsync(
-                "EXEC sp_DeleteOrder @OrderId",
+                var connection = _context.Database.GetDbConnection();
+
+               
+
+                var json = JsonSerializer.Serialize(obj);
+                var param = new SqlParameter("@OrderJson", json);
+                 await _context.Database.ExecuteSqlRawAsync(
+                "EXEC dbo.Usp_SoftDeleteOrder @OrderJson",
                 param);
+                await _context.Database.ExecuteSqlRawAsync(
+                    "EXEC dbo.Usp_SoftDeleteOrder @OrderJson",
+                    param);
 
-            return new Response<OrderHeader>
-            (
-                true,
-                HttpStatusCode.OK,
-                ResponseMessages.SuccessfullOperation,
-                obj
-            );
+               return new Response<OrderHeader>
+                (
+                    true,
+                    HttpStatusCode.OK,
+                    ResponseMessages.SuccessfullOperation,
+                    obj
+                );
+            }
+            catch (Exception ex)
+            {
+                return new Response<OrderHeader>
+                (
+                    false,
+                    HttpStatusCode.InternalServerError,
+                    ex.Message,
+                    null
+                );
+            }
         }
 
         #endregion
@@ -172,12 +191,20 @@ namespace MasterDetailSample01.Models.Services.Repositories
         {
             try
             {
+                //var orders = await _context.Set<OrderHeader>()
+                //     .AsNoTracking()
+                //    .Include(x => x.Customer)
+                //    .Include(x => x.Seller)
+                //    .Include(x => x.OrderDetails)
+                //    .ThenInclude(d => d.Product)
+                //    .ToListAsync();
                 var orders = await _context.Set<OrderHeader>()
-                     .AsNoTracking()
+                    .AsNoTracking()
+                    .Where(x => !x.IsDeleted)
                     .Include(x => x.Customer)
                     .Include(x => x.Seller)
-                    .Include(x => x.OrderDetails)
-                    .ThenInclude(d => d.Product)
+                    .Include(x => x.OrderDetails.Where(d => !d.IsDeleted))
+                        .ThenInclude(d => d.Product)
                     .ToListAsync();
 
 

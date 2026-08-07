@@ -26,7 +26,10 @@ namespace MasterDetailSample01.Models.Configurations
                 .HasForeignKey(x => x.ProductId);
 
             builder.HasQueryFilter(x => !x.IsDeleted);
-
+            builder.HasOne(x => x.OrderHeader)
+                .WithMany(x => x.OrderDetails)
+                .HasForeignKey(x => x.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
 
         }
     }
