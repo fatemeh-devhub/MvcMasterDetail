@@ -1,11 +1,16 @@
 ﻿using MasterDetailSample01.ApplicationServices.Dtos.OrderHeaderDtos;
-using MasterDetailSample01.ApplicationServices.services;
 using MasterDetailSample01.ApplicationServices.services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MasterDetailSample01.Controllers
 {
-    public class OrderController: Controller
+
+
+    [ApiController]
+    [Route("api/[controller]")]
+    [Authorize]
+    public class OrderController : ControllerBase
     {
         private readonly IOrderHeaderApplicationService _orderHeaderApplicationService;
 
@@ -13,13 +18,6 @@ namespace MasterDetailSample01.Controllers
         public OrderController(IOrderHeaderApplicationService orderHeaderApplicationService)
         {
             _orderHeaderApplicationService = orderHeaderApplicationService;
-        }
-        #endregion
-
-        #region [- Index() -]
-        public IActionResult Index() //Views/Order/Index.cshtml
-        {
-            return View();
         }
         #endregion
 

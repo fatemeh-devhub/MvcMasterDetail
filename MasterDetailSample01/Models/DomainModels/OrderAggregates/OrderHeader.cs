@@ -1,4 +1,4 @@
-﻿using MasterDetailSample01.Models.DomainModels.CustomerAggregates;
+﻿ using MasterDetailSample01.Models.DomainModels.CustomerAggregates;
 using MasterDetailSample01.Models.Frameworks;
 
 

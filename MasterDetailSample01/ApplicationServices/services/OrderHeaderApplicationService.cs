@@ -82,7 +82,7 @@ namespace MasterDetailSample01.ApplicationServices.services
                     return new Response<PostOrderHeaderDto>(
                         false,
                         HttpStatusCode.NotFound,
-                        "محصول یافت نشد.",
+                        "Product not found",
                         null);
                 }
 

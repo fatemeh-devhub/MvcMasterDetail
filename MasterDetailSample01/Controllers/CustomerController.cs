@@ -1,9 +1,15 @@
-﻿using MasterDetailSample01.ApplicationServices.services.Contracts;
+﻿using MasterDetailSample01.ApplicationServices.Dtos.CustomerDtos;
+using MasterDetailSample01.ApplicationServices.services.Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MasterDetailSample01.Controllers
 {
-    public class CustomerController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    [Authorize]
+    public class CustomerController : ControllerBase
+
     {
         private readonly ICustomerApplicationService _customerApplicationService;
 
@@ -12,6 +18,17 @@ namespace MasterDetailSample01.Controllers
         {
             _customerApplicationService = customerApplicationService;
         }
+        #endregion
+
+        #region [- Post() -]
+        [HttpPost]
+        public async Task<IActionResult> PostCustomer(PostCustomerDto obj)
+        {
+            var result = await _customerApplicationService.PostAsync(obj);
+            if (!result.IsSuccessful)
+                return BadRequest(result.Message);
+            return Ok(result.Value);
+        } 
         #endregion
 
         #region [- GetAll() -]

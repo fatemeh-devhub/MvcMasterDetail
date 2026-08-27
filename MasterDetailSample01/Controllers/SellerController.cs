@@ -1,9 +1,15 @@
 ﻿using MasterDetailSample01.ApplicationServices.services.Contracts;
+using MasterDetailSample01.ApplicationServices.Dtos.SellerDtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MasterDetailSample01.Controllers
 {
-    public class SellerController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    [Authorize]
+    public class SellerController : ControllerBase
+   
     {
         private readonly ISellerApplicationService _sellerApplicationService;
 
@@ -12,6 +18,17 @@ namespace MasterDetailSample01.Controllers
         {
             _sellerApplicationService = sellerApplicationService;
         }
+        #endregion
+
+        #region [- Post() -]
+        [HttpPost]
+        public async Task<IActionResult> PostSeller(PostSellerDto obj)
+        {
+            var result = await _sellerApplicationService.PostAsync(obj);
+            if (!result.IsSuccessful)
+                return BadRequest(result.Message);
+            return Ok(result.Value);
+        } 
         #endregion
 
         #region [- GetAll() -]

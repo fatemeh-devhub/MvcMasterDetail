@@ -1,10 +1,10 @@
-﻿using System.Linq;
-using System.Net;
-using MasterDetailSample01.ApplicationServices.Dtos.SellerDtos;
+﻿using MasterDetailSample01.ApplicationServices.Dtos.SellerDtos;
 using MasterDetailSample01.ApplicationServices.services.Contracts;
+using MasterDetailSample01.Models.DomainModels.CustomerAggregates;
+using MasterDetailSample01.ResponseFrameworks.Contracts;
 using MasterDetailSample01.Models.Services.Contracts;
 using MasterDetailSample01.ResponseFrameworks;
-using MasterDetailSample01.ResponseFrameworks.Contracts;
+using System.Net;
 
 namespace MasterDetailSample01.ApplicationServices.services
 {
@@ -16,28 +16,51 @@ namespace MasterDetailSample01.ApplicationServices.services
         public SellerApplicationService(ISellerRepository sellerRepository)
         {
             _sellerRepository = sellerRepository;
-        } 
+        }
         #endregion
 
-        public Task<IResponse<bool>> DeleteAsync(DeleteSellerDto obj)
+        #region [- PostAsync() -]
+        public async Task<IResponse<PostSellerDto>> PostAsync(PostSellerDto obj)
         {
-            throw new NotImplementedException();
-        }
+            if (obj == null)
+            {
+                return new Response<PostSellerDto>
+                    (false,
+                    HttpStatusCode.BadRequest,
+                    ResponseMessages.NullInput,
+                    null
+                    );
+            }
+            var seller = new Seller
+            {
+                SellerFirstName = obj.SellerFirstName,
+                SellerLastName = obj.SellerLastName,
+            };
 
-        public Task<IResponse<GetByIdSellerDto>> GetAsync(GetByIdSellerDto obj)
-        {
-            throw new NotImplementedException();
-        }
+            var result = await _sellerRepository.InsertAsync(seller);
 
-        public Task<IResponse<PostSellerDto>> PostAsync(PostSellerDto obj)
-        {
-            throw new NotImplementedException();
+            return new Response<PostSellerDto>
+                   (true,
+                   HttpStatusCode.OK,
+                   ResponseMessages.SuccessfullOperation,
+                   obj
+                   );
         }
+        #endregion
 
-        public Task<IResponse<bool>> PutAsync(PutSellerDto obj)
+        #region [- PutAsync() -]
+        public Task<IResponse<PutSellerDto>> PutAsync(PutSellerDto obj)
         {
             throw new NotImplementedException();
         }
+        #endregion
+       
+        #region [- DeleteAsync() -]
+        public Task<IResponse<DeleteSellerDto>> DeleteAsync(DeleteSellerDto obj)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
 
         #region [- GetAllAsync() -]
         public async Task<IResponse<IEnumerable<GetAllSellerDto>>> GetAllAsync()
@@ -63,13 +86,10 @@ namespace MasterDetailSample01.ApplicationServices.services
                   sellerDtos
                   );
         }
-
-        Task<IResponse<PutSellerDto>> IApplicationService<PostSellerDto, PutSellerDto, DeleteSellerDto, GetByIdSellerDto, GetAllSellerDto>.PutAsync(PutSellerDto obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<IResponse<DeleteSellerDto>> IApplicationService<PostSellerDto, PutSellerDto, DeleteSellerDto, GetByIdSellerDto, GetAllSellerDto>.DeleteAsync(DeleteSellerDto obj)
+        #endregion
+       
+        #region [- GetAsync() -]
+        public Task<IResponse<GetSellerDto>> GetAsync(GetSellerDto obj)
         {
             throw new NotImplementedException();
         }

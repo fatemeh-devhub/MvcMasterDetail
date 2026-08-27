@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MasterDetailSample01.Models.DomainModels.CustomerAggregates;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MasterDetailSample01.Models.DomainModels.CustomerAggregates;
+using Microsoft.EntityFrameworkCore;
+
+
 
 public class SellerConfiguration : IEntityTypeConfiguration<Seller>
 {
@@ -23,8 +25,6 @@ public class SellerConfiguration : IEntityTypeConfiguration<Seller>
             .HasForeignKey(x => x.SellerId);
         
         builder.HasQueryFilter(x => !x.IsDeleted);
-
-
 
     }
 }

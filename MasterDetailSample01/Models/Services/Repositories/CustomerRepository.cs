@@ -1,11 +1,9 @@
-﻿using System.Linq.Expressions;
-using System.Net;
-using MasterDetailSample01.Models.DomainModels.CustomerAggregates;
-
+﻿using MasterDetailSample01.Models.DomainModels.CustomerAggregates;
+using MasterDetailSample01.ResponseFrameworks.Contracts;
 using MasterDetailSample01.Models.Services.Contracts;
 using MasterDetailSample01.ResponseFrameworks;
-using MasterDetailSample01.ResponseFrameworks.Contracts;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace MasterDetailSample01.Models.Services.Repositories
 {
@@ -21,21 +19,51 @@ namespace MasterDetailSample01.Models.Services.Repositories
         #endregion
 
         #region [- DeleteAsync() -]
-        public Task<IResponse<bool>> DeleteAsync(string json)
+        public Task<IResponse<Customer>> DeleteAsync(Customer obj)
         {
             throw new NotImplementedException();
         }
         #endregion
 
         #region [- InsertAsync() -]
-        public Task<IResponse<Guid>> InsertAsync(Customer obj)
+        public async Task<IResponse<Customer>> InsertAsync(Customer obj)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (obj == null)
+                {
+                    return new Response<Customer>
+                        (false,
+                        HttpStatusCode.BadRequest,
+                        ResponseMessages.NullInput,
+                        null
+                        );
+                }
+                   
+                    await _context.AddAsync(obj);
+                    await _context.SaveChangesAsync();
+                return new Response<Customer>
+                      (true,
+                      HttpStatusCode.Created,
+                      ResponseMessages.SuccessfullOperation,
+                      obj
+                      );
+            }
+            catch (Exception ex) 
+            {
+                return new Response<Customer>
+                         (false,
+                         HttpStatusCode.InternalServerError,
+                         ex.Message,
+                         null
+                         );
+            }
+
         }
         #endregion
 
         #region [- UpdateAsync() -]
-        public Task<IResponse<bool>> UpdateAsync(string json)
+        public Task<IResponse<Customer>> UpdateAsync(Customer obj)
         {
             throw new NotImplementedException();
         }
@@ -74,24 +102,7 @@ namespace MasterDetailSample01.Models.Services.Repositories
                 );
             }
         }
-
-        Task<IResponse<Customer>> IRepository<Customer>.InsertAsync(Customer obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IResponse<Customer>> UpdateAsync(Customer obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IResponse<Customer>> DeleteAsync(Customer obj)
-        {
-            throw new NotImplementedException();
-        }
         #endregion
-
-
 
     }
 }

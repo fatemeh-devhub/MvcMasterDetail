@@ -1,11 +1,11 @@
-﻿using System.Net;
-using MasterDetailSample01.ApplicationServices.Dtos.CustomerDtos;
+﻿using MasterDetailSample01.ApplicationServices.Dtos.CustomerDtos;
 using MasterDetailSample01.ApplicationServices.services.Contracts;
 using MasterDetailSample01.Models.DomainModels.CustomerAggregates;
+using MasterDetailSample01.ResponseFrameworks.Contracts;
 using MasterDetailSample01.Models.Services.Contracts;
 using MasterDetailSample01.ResponseFrameworks;
-using MasterDetailSample01.ResponseFrameworks.Contracts;
-using Microsoft.AspNetCore.Identity;
+using System.Net;
+
 
 namespace MasterDetailSample01.ApplicationServices.services
 {
@@ -21,22 +21,45 @@ namespace MasterDetailSample01.ApplicationServices.services
         #endregion
 
         #region [- DeleteAsync() -]
-        public Task<IResponse<bool>> DeleteAsync(DeleteCustomerDto obj)
+        public Task<IResponse<DeleteCustomerDto>> DeleteAsync(DeleteCustomerDto obj)
         {
             throw new NotImplementedException();
         }
         #endregion
 
         #region [- PostAsync() -]
-        public Task<IResponse<PostCustomerDto>> PostAsync(PostCustomerDto obj)
+        public async Task<IResponse<PostCustomerDto>> PostAsync(PostCustomerDto obj)
         {
-            throw new NotImplementedException();
+            if (obj == null) 
+            {
+                return new Response<PostCustomerDto>
+                    (false,
+                    HttpStatusCode.BadRequest,
+                    ResponseMessages.NullInput,
+                    null
+                    );
+            }
+            var customer = new Customer
+            {
+                CustomerFirstName = obj.CustomerFirstName,
+                CustomerLastName = obj.CustomerLastName,
+                PhoneNumber = obj.PhoneNumber,
+            };
+            var result = await _customerRepository.InsertAsync(customer);
+            return new Response<PostCustomerDto>
+                    (true,
+                    HttpStatusCode.OK,
+                    ResponseMessages.SuccessfullOperation,
+                    obj
+                    );
         }
+
+        
 
         #endregion
 
         #region [- PutAsync() -]
-        public Task<IResponse<bool>> PutAsync(PutCustomerDto obj)
+        public Task<IResponse<PutCustomerDto>> PutAsync(PutCustomerDto obj)
         {
             throw new NotImplementedException();
         }
@@ -44,9 +67,8 @@ namespace MasterDetailSample01.ApplicationServices.services
 
         #endregion
 
-
         #region [- GetAsync() -]
-        public Task<IResponse<GetByIdCustomerDto>> GetAsync(GetByIdCustomerDto obj)
+        public Task<IResponse<GetCustomerDto>> GetAsync(GetCustomerDto obj)
         {
             throw new NotImplementedException();
         }
@@ -54,7 +76,6 @@ namespace MasterDetailSample01.ApplicationServices.services
 
         #endregion
       
-        
         #region [- GetAllAsync() -]
         public async Task<IResponse<IEnumerable<GetAllCustomerDto>>> GetAllAsync()
         {
@@ -84,19 +105,6 @@ namespace MasterDetailSample01.ApplicationServices.services
                 customerDtos
             );
         }
-
-        Task<IResponse<PutCustomerDto>> IApplicationService<PostCustomerDto, PutCustomerDto, DeleteCustomerDto, GetByIdCustomerDto, GetAllCustomerDto>.PutAsync(PutCustomerDto obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<IResponse<DeleteCustomerDto>> IApplicationService<PostCustomerDto, PutCustomerDto, DeleteCustomerDto, GetByIdCustomerDto, GetAllCustomerDto>.DeleteAsync(DeleteCustomerDto obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
-
+      #endregion
     }
 }

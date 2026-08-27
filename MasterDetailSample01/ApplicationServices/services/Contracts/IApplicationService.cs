@@ -9,7 +9,6 @@ namespace MasterDetailSample01.ApplicationServices.services.Contracts
         Task<IResponse<TPut>> PutAsync(TPut obj);
         Task <IResponse<TDelete>> DeleteAsync(TDelete obj);
         Task <IResponse<TGet>> GetAsync(TGet obj);
-        //Task<IResponse<TGet>> GetViewAsync(TView obj);
         Task<IResponse<IEnumerable<TGetAll>>> GetAllAsync();
     }
 }

@@ -1,6 +1,6 @@
 ﻿using MasterDetailSample01.Models.DomainModels.CustomerAggregates;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore;
 
 public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
 {
@@ -25,8 +25,9 @@ public class CustomerConfiguration : IEntityTypeConfiguration<Customer>
             .HasForeignKey(x => x.CustomerId);
 
         builder.HasQueryFilter(x => !x.IsDeleted);
+       
 
-     
+
     }
 }
 

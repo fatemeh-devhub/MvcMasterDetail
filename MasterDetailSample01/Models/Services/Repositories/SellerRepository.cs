@@ -1,9 +1,10 @@
-﻿using MasterDetailSample01.ResponseFrameworks.Contracts;
+﻿using MasterDetailSample01.Models.DomainModels.CustomerAggregates;
+using MasterDetailSample01.ResponseFrameworks.Contracts;
 using MasterDetailSample01.Models.Services.Contracts;
 using MasterDetailSample01.ResponseFrameworks;
 using Microsoft.EntityFrameworkCore;
 using System.Net;
-using MasterDetailSample01.Models.DomainModels.CustomerAggregates;
+
 
 namespace MasterDetailSample01.Models.Services.Repositories
 {
@@ -18,25 +19,62 @@ namespace MasterDetailSample01.Models.Services.Repositories
         }
         #endregion
 
-        public Task<IResponse<Guid>> InsertAsync(Seller obj)
+        #region [- InsertAsync() -]
+        public async Task<IResponse<Seller>> InsertAsync(Seller obj)
+        {
+            try
+            {
+                if (obj == null)
+                {
+                    return new Response<Seller>
+                        (false,
+                        HttpStatusCode.BadRequest,
+                        ResponseMessages.NullInput,
+                        null
+                        );
+                }
+                await _context.AddAsync(obj);
+                await _context.SaveChangesAsync();
+                return new Response<Seller>
+                      (true,
+                      HttpStatusCode.Created,
+                      ResponseMessages.SuccessfullOperation,
+                      obj
+                      );
+
+            }
+            catch (Exception ex)
+            {
+                return new Response<Seller>
+                        (false,
+                        HttpStatusCode.InternalServerError,
+                        ex.Message,
+                        null
+                        );
+            }
+        }
+        #endregion
+
+        #region [- UpdateAsync() -]
+        public Task<IResponse<Seller>> UpdateAsync(Seller obj)
         {
             throw new NotImplementedException();
-        }
+        } 
+        #endregion
 
-        public Task<IResponse<bool>> UpdateAsync(string json)
+        #region [- DeleteAsync() -]
+        public Task<IResponse<Seller>> DeleteAsync(Seller obj)
         {
             throw new NotImplementedException();
-        }
+        } 
+        #endregion
 
-        public Task<IResponse<bool>> DeleteAsync(string json)
-        {
-            throw new NotImplementedException();
-        }
-
+        #region [- selectAsync() -]
         public Task<IResponse<Seller>> selectAsync(Seller obj)
         {
             throw new NotImplementedException();
-        }
+        } 
+        #endregion
 
         #region [- selectAllAsync() -]
         public async Task<IResponse<IEnumerable<Seller>>> selectAllAsync()
@@ -63,20 +101,6 @@ namespace MasterDetailSample01.Models.Services.Repositories
             }
         }
 
-        Task<IResponse<Seller>> IRepository<Seller>.InsertAsync(Seller obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IResponse<Seller>> UpdateAsync(Seller obj)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IResponse<Seller>> DeleteAsync(Seller obj)
-        {
-            throw new NotImplementedException();
-        }
         #endregion
     }
 }

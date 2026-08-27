@@ -1,34 +1,31 @@
-﻿using System.Data;
-using System.Net;
-using System.Text.Json;
-using MasterDetailSample01.Models.DomainModels.OrderAggregates;
+﻿using MasterDetailSample01.Models.DomainModels.OrderAggregates;
+using MasterDetailSample01.ResponseFrameworks.Contracts;
 using MasterDetailSample01.Models.Services.Contracts;
 using MasterDetailSample01.ResponseFrameworks;
-using MasterDetailSample01.ResponseFrameworks.Contracts;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.Data.SqlClient;
+using System.Text.Json;
+using System.Data;
+using System.Net;
 
 namespace MasterDetailSample01.Models.Services.Repositories
 {
     public class OrderHeaderRepository : IOrderHeaderRepository
     {
-        private readonly AppDbContext _context;
-
-
+        private readonly AppDbContext _context; 
+      
         #region [- ctor -]
         public OrderHeaderRepository(AppDbContext context)
         {
             _context = context;
         }
-
-
         #endregion
 
         #region [- InsertAsync() -]
         public async Task<IResponse<OrderHeader>> InsertAsync(OrderHeader obj)
         {
-           try
+
+            try
             {
                 var json = JsonSerializer.Serialize(obj);
                 var param = new SqlParameter("@OrderJson", json);
@@ -47,19 +44,18 @@ namespace MasterDetailSample01.Models.Services.Repositories
                     obj
                 );
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return new Response<OrderHeader>
               (
                   false,
                   HttpStatusCode.InternalServerError,
-                  ResponseMessages.Error,
+                  ex.Message,
                  null
               );
             }
-        }
-
-        #endregion
+             }
+         #endregion
 
         #region [- UpdateAsync() -]
         public async Task<IResponse<OrderHeader>> UpdateAsync(OrderHeader obj)
@@ -104,18 +100,12 @@ namespace MasterDetailSample01.Models.Services.Repositories
             try
             {
 
-                var connection = _context.Database.GetDbConnection();
-
-               
-
                 var json = JsonSerializer.Serialize(obj);
                 var param = new SqlParameter("@OrderJson", json);
                  await _context.Database.ExecuteSqlRawAsync(
                 "EXEC dbo.Usp_SoftDeleteOrder @OrderJson",
                 param);
-                await _context.Database.ExecuteSqlRawAsync(
-                    "EXEC dbo.Usp_SoftDeleteOrder @OrderJson",
-                    param);
+               
 
                return new Response<OrderHeader>
                 (
@@ -140,50 +130,42 @@ namespace MasterDetailSample01.Models.Services.Repositories
         #endregion
 
         #region [- selectAsync() -]
-        //public async Task<IResponse<OrderHeader>> selectAsync(OrderHeader obj)
-        //{
-        //    try
-        //    {
-        //        if (obj == null)
-        //        {
-        //            return new Response<OrderHeader>
-        //           (false,
-        //            HttpStatusCode.BadRequest,
-        //            ResponseMessages.Error,
-        //            null);
-        //        }
-
-        //        var orderHeader = await _context.OrderHeaders
-        //       .Include(x => x.Customer)
-        //       .Include(x => x.Seller)
-        //       .Include(x => x.OrderDetails)
-        //       .AsNoTracking()
-        //       .ToListAsync();
-
-        //        return new Response<OrderHeader>
-        //           (true,
-        //            HttpStatusCode.OK,
-        //            ResponseMessages.SuccessfullOperation,
-        //            orderHeader);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new Response<OrderHeader>
-        //        (false,
-        //         HttpStatusCode.InternalServerError,
-        //         ex.ToString(),
-        //         null);
-
-        //    }
-        //}
-
-
-        public Task<IResponse<OrderHeader>> selectAsync(OrderHeader obj)
+        public async Task<IResponse<OrderHeader>> selectAsync(OrderHeader obj)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (obj == null)
+                {
+                    return new Response<OrderHeader>
+                   (false,
+                    HttpStatusCode.BadRequest,
+                    ResponseMessages.Error,
+                    null);
+                }
+
+                var orderHeader = await _context.Set<OrderHeader>()
+               .Include(x => x.Customer)
+               .Include(x => x.Seller)
+               .Include(x => x.OrderDetails)
+               .AsNoTracking()
+               .ToListAsync();
+
+                return new Response<OrderHeader>
+                   (true,
+                    HttpStatusCode.OK,
+                    ResponseMessages.SuccessfullOperation,
+                    obj);
+            }
+            catch (Exception ex)
+            {
+                return new Response<OrderHeader>
+                (false,
+                 HttpStatusCode.InternalServerError,
+                 ex.ToString(),
+                 null);
+
+            }
         }
-
-
         #endregion
 
         #region [- selectAllAsync() -]

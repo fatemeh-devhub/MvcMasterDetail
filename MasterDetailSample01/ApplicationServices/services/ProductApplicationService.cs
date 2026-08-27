@@ -1,10 +1,9 @@
-﻿
-using System.Net;
+﻿using MasterDetailSample01.ApplicationServices.services.Contracts;
 using MasterDetailSample01.ApplicationServices.Dtos.ProductDtos;
-using MasterDetailSample01.ApplicationServices.services.Contracts;
+using MasterDetailSample01.ResponseFrameworks.Contracts;
 using MasterDetailSample01.Models.Services.Contracts;
 using MasterDetailSample01.ResponseFrameworks;
-using MasterDetailSample01.ResponseFrameworks.Contracts;
+using System.Net;
 
 namespace MasterDetailSample01.ApplicationServices.services
 {
@@ -16,30 +15,56 @@ namespace MasterDetailSample01.ApplicationServices.services
         public ProductApplicationService(IProductRepository productRepository)
         {
             _productRepository = productRepository;
-        } 
+        }
         #endregion
 
-        public Task<IResponse<DeleteProductDto>> DeleteAsync(DeleteProductDto obj)
+        #region [- PostAsync() -]
+        public async Task<IResponse<PostProductDto>> PostAsync(PostProductDto obj)
         {
-            throw new NotImplementedException();
+            if (obj == null)
+            {
+                return new Response<PostProductDto>
+                      (false,
+                      HttpStatusCode.BadRequest,
+                      ResponseMessages.NullInput,
+                      null
+                      );
+            }
+            var product = new Product
+            {
+                ProductName = obj.ProductName,
+                UnitPrice = obj.UnitPrice,
+            };
+            await _productRepository.InsertAsync(product);
+            return new Response<PostProductDto>
+                    (true,
+                    HttpStatusCode.OK,
+                    ResponseMessages.SuccessfullOperation,
+                    obj
+                    );
         }
- 
-        public Task<IResponse<PostProductDto>> PostAsync(PostProductDto obj)
-        {
-            throw new NotImplementedException();
-        }
+        #endregion
 
+        #region [- PutAsync() -]
         public Task<IResponse<PutProductDto>> PutAsync(PutProductDto obj)
         {
             throw new NotImplementedException();
         }
+        #endregion
+
+        #region [- DeleteAsync() -]
+        public Task<IResponse<DeleteProductDto>> DeleteAsync(DeleteProductDto obj)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
 
         #region [- GetAsync() -]
-        public async Task<IResponse<GetByIdProductDto>> GetAsync(GetByIdProductDto obj)
+        public async Task<IResponse<GetProductDto>> GetAsync(GetProductDto obj)
         {
             if (obj == null)
             {
-                return new Response<GetByIdProductDto>
+                return new Response<GetProductDto>
                     (false,
                     HttpStatusCode.NotFound,
                     ResponseMessages.NullInput,
@@ -53,19 +78,19 @@ namespace MasterDetailSample01.ApplicationServices.services
             var result = await _productRepository.selectAsync(product);
             if (result.Value == null)
             {
-                return new Response<GetByIdProductDto>(
+                return new Response<GetProductDto>(
                     false,
                     HttpStatusCode.NotFound,
                     "Product not found",
                     null
                 );
             }
-            var dto = new GetByIdProductDto()
+            var dto = new GetProductDto()
             {
                 ProductName = result.Value.ProductName,
                 UnitPrice = result.Value.UnitPrice
             };
-            return new Response<GetByIdProductDto>
+            return new Response<GetProductDto>
                (true,
                HttpStatusCode.OK,
                ResponseMessages.SuccessfullOperation,
@@ -102,12 +127,12 @@ namespace MasterDetailSample01.ApplicationServices.services
                 );
         }
 
-        Task<IResponse<PutProductDto>> IApplicationService<PostProductDto, PutProductDto, DeleteProductDto, GetByIdProductDto, GetAllProductDto>.PutAsync(PutProductDto obj)
+        Task<IResponse<PutProductDto>> IApplicationService<PostProductDto, PutProductDto, DeleteProductDto, GetProductDto, GetAllProductDto>.PutAsync(PutProductDto obj)
         {
             throw new NotImplementedException();
         }
 
-        Task<IResponse<DeleteProductDto>> IApplicationService<PostProductDto, PutProductDto, DeleteProductDto, GetByIdProductDto, GetAllProductDto>.DeleteAsync(DeleteProductDto obj)
+        Task<IResponse<DeleteProductDto>> IApplicationService<PostProductDto, PutProductDto, DeleteProductDto, GetProductDto, GetAllProductDto>.DeleteAsync(DeleteProductDto obj)
         {
             throw new NotImplementedException();
         }

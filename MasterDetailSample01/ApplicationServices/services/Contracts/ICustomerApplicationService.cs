@@ -3,7 +3,7 @@
 namespace MasterDetailSample01.ApplicationServices.services.Contracts
 {
     public interface ICustomerApplicationService : IApplicationService
-        <PostCustomerDto,PutCustomerDto, DeleteCustomerDto, GetByIdCustomerDto,GetAllCustomerDto>
+        <PostCustomerDto,PutCustomerDto, DeleteCustomerDto, GetCustomerDto, GetAllCustomerDto>
     {
     }
 }
