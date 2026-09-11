@@ -2,7 +2,7 @@
 
 namespace MasterDetailSample01.Models.DomainModels.IdentityDto
 {
-    public class LoginDto
+    public class Login
     {
             [Required]
             public string? Username { get; set; }

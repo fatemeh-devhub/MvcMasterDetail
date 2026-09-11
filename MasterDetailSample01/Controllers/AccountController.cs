@@ -38,7 +38,7 @@ namespace MasterDetailSample01.Controllers
         [Route("login")]
         //Check the username and password → get the user's roles → create claims →
         //create a JWT → return the token to the client.
-        public async Task<IActionResult> Login([FromBody] LoginDto model)
+        public async Task<IActionResult> Login([FromBody] Login model)
         {
             var user = await _userManager.FindByNameAsync(model.Username);
             if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
@@ -72,11 +72,11 @@ namespace MasterDetailSample01.Controllers
         #region [- Register() -]
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto model)
+        public async Task<IActionResult> Register([FromBody] Register model)
         {
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto { Status = 500, Message = "User already exists!" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = 500, Message = "User already exists!" });
 
             IdentityUser user = new()
             {
@@ -87,9 +87,9 @@ namespace MasterDetailSample01.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto { Status = 500, Message = "User creation failed! Please check user details and try again." });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = 500, Message = "User creation failed! Please check user details and try again." });
 
-            return Ok(new ResponseDto { Status = 200, Message = "User created successfully!" });
+            return Ok(new Response { Status = 200, Message = "User created successfully!" });
         }
         #endregion
 
@@ -97,11 +97,11 @@ namespace MasterDetailSample01.Controllers
         [HttpPost]
         [Authorize()]
         [Route("register-admin")]
-        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterDto model)
+        public async Task<IActionResult> RegisterAdmin([FromBody] Register model)
         {
             var userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto { Status = 500, Message = "User already exists!" });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = 500, Message = "User already exists!" });
 
             IdentityUser user = new()
             {
@@ -111,7 +111,7 @@ namespace MasterDetailSample01.Controllers
             };
             var result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseDto { Status = 500, Message = "User creation failed! Please check user details and try again." });
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = 500, Message = "User creation failed! Please check user details and try again." });
 
             if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
                 await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
@@ -126,7 +126,7 @@ namespace MasterDetailSample01.Controllers
             {
                 await _userManager.AddToRoleAsync(user, UserRoles.User);
             }
-            return Ok(new ResponseDto { Status = 200, Message = "User created successfully!" });
+            return Ok(new Response { Status = 200, Message = "User created successfully!" });
         }
         #endregion
 
